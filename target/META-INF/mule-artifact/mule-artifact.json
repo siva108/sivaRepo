@@ -1,0 +1,24 @@
+{
+  "configs": [
+    "choicerouter.xml"
+  ],
+  "secureProperties": [],
+  "redeploymentEnabled": true,
+  "name": "2f8667b9-95f0-4ebe-8660-870a11b069cc:choicerouter:1.0.0",
+  "minMuleVersion": "4.3.0",
+  "requiredProduct": "MULE_EE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "exportedPackages": [],
+      "exportedResources": [
+        "choicerouter.xml",
+        "log4j2.xml"
+      ]
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  }
+}

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:json="http://www.mulesoft.org/schema/mule/json"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="51d02b48-b1ff-4692-bfea-2a3a7f698fb1" >
+		<http:listener-connection host="localhost" port="8081" />
+	</http:listener-config>
+	<email:smtp-config name="Email_SMTP" doc:name="Email SMTP" doc:id="9f0b40de-54be-4236-b092-89f4427e15fa" >
+		<email:smtp-connection host="pop.gmail.com" port="995" user="sivabsc321@gmail.ccom" password="Siva@108" />
+	</email:smtp-config>
+	<flow name="choicerouterFlow" doc:id="e5eb80b4-dd0d-4ce3-a71e-01e2675a720d" >
+		<http:listener doc:name="Listener" doc:id="d0c896b1-9a76-4a19-9679-57b2299d7beb" config-ref="HTTP_Listener_config" path="/choice" outputMimeType="application/json"/>
+		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="7537a5db-5825-46a5-a9c4-2cdb18b25d90" variableName="getdata" mimeType="application/json"/>
+		<logger level="INFO" doc:name="recvppayoaLogger" doc:id="f1e48171-75c5-4ad1-a27d-990ccbe94f69" message="#[vars.getdata]"/>
+		<foreach doc:name="For Each" doc:id="7e6b2546-80aa-4951-be55-d5c9297c02ad" collection="#[vars.getdata]">
+			<choice doc:name="ChoiceCountry" doc:id="295a3d87-e711-4bb6-b8ce-474f2fcfb592">
+			<when expression="#[vars.getdata.country[0]=='ind']">
+				<ee:transform doc:name="Transform Message" doc:id="4d87fd93-3984-4153-9095-cd10b4408159">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message:"received ind data"
+}]]></ee:set-payload>
+					</ee:message>
+						<ee:variables >
+							<ee:set-variable variableName="dd" ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-variable>
+						</ee:variables>
+				</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="8ad1b6cd-90ac-4316-873e-c076cfcc5d6b" />
+			</when>
+			<when expression="#[vars.getdata.country[1]=='aus']">
+				<ee:transform doc:name="Transform Message" doc:id="559b2a2c-dada-4b03-99f0-a110fb3f869b">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message:"received aus data"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+
+			</when>
+				<otherwise>
+				<ee:transform doc:name="Transform Message" doc:id="24a7a87c-54ba-4b05-935e-564b714f5025">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message:"received default data"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		</foreach>
+	</flow>
+</mule>
